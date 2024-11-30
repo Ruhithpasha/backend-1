@@ -1,1 +1,1 @@
-export const DB_NAME = "youtubedb"
+export const DB_NAME = "youtube-clone";

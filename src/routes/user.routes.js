@@ -10,7 +10,7 @@ upload.fields([
     {name:"avatar",
     maxcount:1},
     {
-        name:"coverimage",
+        name:"coverImage",
         maxCount:1
     }
     //the middleware is injected here to handel the image uploads and avatar uploads it ensures the files are processed and available in the request object before the controller function is executed

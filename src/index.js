@@ -34,12 +34,14 @@
 import dotenv from 'dotenv';
 import connect_DB from './db/index.js';
 import app from './app.js'
+// import express from 'express';
 
 // You used the dotenv module to load environment variables from a .env file into process.env. This allows you to manage configuration settings outside of your code, making it easier to change settings without modifying the source code.
-
+// const app = express();
 dotenv.config({
-    path : './env'
+    path: "./.env"
 })
+ 
 
 connect_DB()
 .then((result) => {

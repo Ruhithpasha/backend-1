@@ -27,7 +27,7 @@ const userSchema = new mongoose.Schema(
             type:String,
             required:true,
         },
-        coverimage:{
+        coverImage:{
             type:String,
         },
         password:{
@@ -83,7 +83,7 @@ userSchema.methods.generateAccessToken = function(){
 }
 // this method generates a refresh token
  userSchema.methods.generaterefreshToken  =function (){
-    return jwt .sign(
+    return jwt.sign(
         {
             _id:this._id,
            
