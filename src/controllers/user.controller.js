@@ -6,6 +6,23 @@ import { uploadOnCloudinary } from "../services/cloudinary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { User } from "../models/user.models.js";
 
+// the below line is used to generate the access token
+
+const generateAccessTokenAndRefreshToken = async(userId)=>{
+try {
+  const user = await  User.findById(userId)
+  const accessToken = generateAccessToken();
+  const refreshToken = generaterefreshToken();
+
+  user.refreshToken = refreshToken;
+ await user.save({validateBeforeSave : false})
+  return{ accessToken , refreshToken}
+} catch (error) {
+  throw new ApiError(500,"Oops something went wrong")
+}
+}
+
+
 // below function is used to register a user
 // The registerUser function is created in the src/controllers/user.controller.js file. The registerUser function is an asynchronous function that takes the request and response objects as arguments. The registerUser function sends a response with a status code of 200 and a JSON object with a message property set to "ok".
 
@@ -80,7 +97,41 @@ const registerUser = asyncHandler(async (req, res) => {
   return res.status(201).json(new ApiResponse(200, createdUser, "User registered successfully"));
 });
 
-export default registerUser;
+const loginUser = asyncHandler(async(req,res)=>{
+ const {email , username , password} = req.body
+
+ if (!username || !email) {
+  throw new ApiError(400,"Username or email is required")
+ }
+// User.findOne returns the first thing that it finds in the database
+const userReturned= await User.findOne({
+  // this below line return either username or email by finding anyone of it in the database and the $or operator is  a mongodb operator 
+  $or :[{username},{email}]
+})
+
+if (!userReturned) {
+  throw new ApiError(404,"User does not exit");
+}
+
+const isPasswordValid = await userReturned.isPasswordCorrect(password)
+     
+if (!isPasswordValid) {
+  throw new ApiError(401,"Password is not valid ");
+  
+}
+  // accessing the generateAccessTokenand refreshtoken method 
+const {accessToken,refreshToken} = generateAccessTokenAndRefreshToken(User._id)
+
+// this below line is used to send the cookies data to logged in user
+       
+const loggedInUser = await User.findById(User._id).select("-password -refreshToken")
+
+})
+
+export {
+  registerUser,
+  loginUser
+}
 
 // Steps to register a user
 // 1. Create a controller function in the src/controllers/user.controller.js file.
